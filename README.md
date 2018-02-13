@@ -9,7 +9,8 @@ collections,
 csv,
 datetime,
 string,
-pytest
+pytest,
+bisect
 
 
 Approach
@@ -49,3 +50,26 @@ The 'parse_input()' module in turn calls the 'read_input()' module that reads th
 The 'parse_input()' module performs the needed computations and returns a list of lists data structure to the 'main()' module. The list of lists data structure is then written out to the repeat_donors.txt output file  
 
 A time decorator module, 'time_decorator', has been included to capture the run time of the program
+
+The code computes running percentile amount using nearest-rank method. The python sort module is used for the first sort. The sort module uses timsort method for sorting. This is a combination of merge and insertion sort. This is O(nlogn) Operation Complexity in the worst case. In best case when input is already sorted, it should run in linear time.
+In this specific scenario since we need to append new value to the list and recompute percentile each time, the python bisect.insort module is optimal for re-computations. Since if the list is already sorted, then we just need to binary search the list for insertion point and insert the new value. This is O(n) Operation Complexity for Insertion in the worst case
+
+Run Timing Results
+
+First Run
+----------
+./run_tests.sh
+Total time running parse_input: 0.004230022430419922 seconds
+[PASS]: test_1 repeat_donors.txt
+Total time running parse_input: 0.9205238819122314 seconds
+[PASS]: test_2 repeat_donors.txt
+[Tue Feb 13 08:28:04 PST 2018] 2 of 2 tests passed
+
+Second Run
+-----------
+./run_tests.sh
+Total time running parse_input: 0.003670930862426758 seconds
+[PASS]: test_1 repeat_donors.txt
+Total time running parse_input: 0.5931611061096191 seconds
+[PASS]: test_2 repeat_donors.txt
+[Tue Feb 13 08:43:26 PST 2018] 2 of 2 tests passed
