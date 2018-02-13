@@ -3,9 +3,10 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 import csv
+import string
 
 # Check validity of TRANSACTION_DT format to ensure it is not malformed
-# This module is invoked by parse_input module
+# This module is invoked by read_input module
 def valid_date(trx_date):
     try:
         d = datetime.strptime(trx_date, '%m%d%Y')
@@ -13,6 +14,14 @@ def valid_date(trx_date):
         return False
     else:
         return True
+
+# Check validity of NAME format to ensure it is not malformed
+# This module is invoked by read_input module
+def valid_name(name):
+    name = name.replace(" ","")
+    strip_name = "".join((char for char in name if char not in string.punctuation))
+    n = strip_name.isalpha()
+    return n
 
 # Reads input file. This module is invoked by the parse_input module
 # Using 'lazy'(generator) method with yield statement to process input file row by row instead of loading entire file into memory
@@ -30,7 +39,7 @@ def read_input(filename, cols, cols_relevant):
                     row['TRANSACTION_DT'] = year
                     if len(row['ZIP_CODE']) >= 5:
                         row['ZIP_CODE'] = row['ZIP_CODE'][:5]
-                        if row['NAME'].isalpha:
+                        if valid_name(row['NAME']):
                             if row['CMTE_ID'] and row['TRANSACTION_AMT']:
                                 row_filtered = {k:v for k,v in row.items() if k in cols_relevant}
                                 yield row_filtered
