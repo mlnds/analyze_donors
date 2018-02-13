@@ -4,6 +4,21 @@ from collections import defaultdict
 from datetime import datetime
 import csv
 import string
+import time
+from functools import wraps
+
+# decorator module to compute the program run time
+def time_decorator(function):
+    @wraps(function)
+    def timer_wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = function(*args, **kwargs)
+        end_time = time.time()
+        print ("Total time running %s: %s seconds" %
+               (function.__name__, str(end_time-start_time))
+               )
+        return result
+    return timer_wrapper
 
 # Check validity of TRANSACTION_DT format to ensure it is not malformed
 # This module is invoked by read_input module
@@ -50,6 +65,7 @@ def read_input(filename, cols, cols_relevant):
 # computes percentile amount using nearest-rank method
 # generates these computations by CMTE_ID, ZIP_CODE and YEAR
 # returns these computations to the main module
+@time_decorator
 def parse_input(input_filename, percentile_filename, cols, cols_relevant, cols_donor_id, cols_output_id):
     donor_list = []
     total_amt_by_output_key = {}

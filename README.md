@@ -47,3 +47,5 @@ The 'main()' module defines the structure of the input file and outlines the fie
 It calls the 'parse_input()'' module and passes the input filename and percentile filename parameters to it.
 The 'parse_input()' module in turn calls the 'read_input()' module that reads the input file and hands over a row at a time to be processed. Once one row has been processed, the next row is handed over.
 The 'parse_input()' module performs the needed computations and returns a list of lists data structure to the 'main()' module. The list of lists data structure is then written out to the repeat_donors.txt output file  
+
+A time decorator module, 'time_decorator', has been included to capture the run time of the program
