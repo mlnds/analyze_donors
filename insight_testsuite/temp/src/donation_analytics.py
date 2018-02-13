@@ -6,6 +6,7 @@ import csv
 import string
 import time
 from functools import wraps
+import bisect
 
 # decorator module to compute the program run time
 def time_decorator(function):
@@ -62,7 +63,8 @@ def read_input(filename, cols, cols_relevant):
 # This module is called from the main module
 # this module parses each row returned by the read_input module
 # computes the running percentile amount, total amount of contributions and total transactions of contributions from repeat donors
-# computes percentile amount using nearest-rank method
+# computes percentile amount using nearest-rank method. The python sort module uses timsort method for sorting. This is a combination of merge and insertion sort. O(nlogn) Operation Complexity worst case. In best case when input is already sorted, it should run in linear time.
+# In this specific scenario since we need to append new value to the list and recompute percentile each time, the python bisect.insort module is optimal for recomputations. Since if the list is already sorted, then just need to binary search the list for insertion point and insert the new value. O(n) for Insertion worst case
 # generates these computations by CMTE_ID, ZIP_CODE and YEAR
 # returns these computations to the main module
 @time_decorator
@@ -89,8 +91,11 @@ def parse_input(input_filename, percentile_filename, cols, cols_relevant, cols_d
         else:
             total_amt_by_output_key[output_key] = total_amt_by_output_key.setdefault(output_key, 0) + float(row['TRANSACTION_AMT'])
             count_trx_by_output_key[output_key] = count_trx_by_output_key.setdefault(output_key, 0) + 1
-            trx_amt_by_output_key[output_key].append(float(row['TRANSACTION_AMT']))
-            trx_amt_by_output_key[output_key].sort()
+            if trx_amt_by_output_key[output_key] is None:
+                trx_amt_by_output_key[output_key].append(float(row['TRANSACTION_AMT']))
+                trx_amt_by_output_key[output_key].sort()
+            else:
+                bisect.insort(trx_amt_by_output_key[output_key], float(row['TRANSACTION_AMT']))
             N = len(trx_amt_by_output_key[output_key])
             percentile_idx = int((percentile/100) * N)
             running_percentile = trx_amt_by_output_key[output_key][percentile_idx]
